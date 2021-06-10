@@ -21,7 +21,7 @@ cat << EOF
 #Memory usage: $mem_mb ($mem_pr)
 #Disk usage: 
 #CPU load: $cpu_usage
-#Last boot: 
+#Last boot: `who -b | cut -c 21- | xargs`
 #LVM use: 
 #TCP connections: 
 #Logged users: 
