@@ -14,6 +14,8 @@ cpu_usage=`top -bn1 | grep '^%Cpu' | cut -c 10- | xargs | \
 mem_mb=`free -m | grep 'Mem' | awk '{ printf("%d/%dMB", $3, $2) }'`
 mem_pr=`free | grep 'Mem' | awk '{ printf("%.2f%%", $3 / $2 * 100) }'`
 
+lvm_usage=`type lvscan &> /dev/null && lvscan | grep -vq 'ACTIVE' && echo 'yes' || echo 'no'`
+
 cat << EOF
 #Architecture: `uname -a`
 #CPU cores: $cpu_cores
@@ -22,8 +24,8 @@ cat << EOF
 #Disk usage: 
 #CPU load: $cpu_usage
 #Last boot: `who -b | cut -c 21- | xargs`
-#LVM use: 
-#TCP connections: 
+#LVM use: $lvm_usage
+#TCP connections: `netstat | egrep '^tcp6?\s+.+\s+ESTABLISHED$' | wc -l`
 #Logged users: `who | wc -l`
 #Network: 
 #sudo: 
