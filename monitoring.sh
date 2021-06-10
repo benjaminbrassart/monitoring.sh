@@ -27,6 +27,6 @@ cat << EOF
 #LVM use: $lvm_usage
 #TCP connections: `netstat | egrep '^tcp6?\s+.+\s+ESTABLISHED$' | wc -l`
 #Logged users: `who | wc -l`
-#Network: 
+#Network: `hostname -I | xargs` (`ip address | grep 'ether' | head -n 1 | awk '{ print $2 }'`)
 #sudo: 
 EOF
