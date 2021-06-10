@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 cat << EOF
-#Architecture:		
+#Architecture:		`uname -a`
 #CPU cores:			
 #CPU threads:		
 #Memory usage:		
