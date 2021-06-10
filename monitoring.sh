@@ -24,7 +24,7 @@ cat << EOF
 #Last boot: `who -b | cut -c 21- | xargs`
 #LVM use: 
 #TCP connections: 
-#Logged users: 
+#Logged users: `who | wc -l`
 #Network: 
 #sudo: 
 EOF
