@@ -9,11 +9,14 @@ cpu_cores=`echo "$cpu" | grep '^CPU(s)' | \
 cpu_threads=`echo "$cpu" | grep '^Thread(s) per core' | \
 	awk -F "$FS" -v cores=$cpu_cores '{ print cores * $2 }'`
 
+mem_mb=`free -m | grep 'Mem' | awk '{ printf("%d/%dMB", $3, $2) }'`
+mem_pr=`free | grep 'Mem' | awk '{ printf("%.2f", $3 / $2 * 100) }'`
+
 cat << EOF
 #Architecture: `uname -a`
 #CPU cores: $cpu_cores
 #CPU threads: $cpu_threads
-#Memory usage: 
+#Memory usage: $mem_mb ($mem_pr%)
 #Disk usage: 
 #CPU load: 
 #Last boot: 
