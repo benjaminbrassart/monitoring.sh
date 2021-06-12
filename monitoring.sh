@@ -39,6 +39,8 @@ disk_perc=`awk '{ printf("%.1f%%", $1 / $2 * 100) }' <<< $disk`
 disk_human=`numfmt --from='iec' --to='iec' --field='1-2' <<< "$disk" | \
 	awk '{ print $1 "/" $2 }'`
 
+sudo_log=`find /var/log/sudo/ -iwholename '*/*/*/log' | wc -l`
+
 # Print everything
 cat << EOF
 #Architecture: `uname -a`
@@ -53,5 +55,17 @@ cat << EOF
 #TCP connections: `ss -nt state established | head -n +2 | wc -l`
 #Logged users: `who | wc -l`
 #Network: `hostname -I | cut -d ' ' -f 1` (`ip address | grep 'ether' | head -n 1 | awk '{ print $2 }'`)
-#sudo: 
+#sudo: $sudo_log command`if [ $sudo_log -gt 1 ]; then echo 's'; fi`
 EOF
+
+# while pretty ugly, find is likely faster than bash
+# at parsing wildcard (+30ms for 14102 files)
+
+#time find /var/log/sudo/ -iwholename '*/*/*/log'
+# real	0m0.282s
+# user	0m0.118s
+# sys	0m0.166s
+#time find /var/log/sudo/*/*/* -name 'log'
+# real	0m0.312s
+# user	0m0.104s
+# sys	0m0.209s
