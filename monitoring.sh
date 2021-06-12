@@ -39,7 +39,7 @@ disk_perc=`awk '{ printf("%.1f%%", $1 / $2 * 100) }' <<< $disk`
 disk_human=`numfmt --from='iec' --to='iec' --field='1-2' <<< "$disk" | \
 	awk '{ print $1 "/" $2 }'`
 
-sudo_log=`find /var/log/sudo/ -iwholename '*/*/*/log' | wc -l`
+sudo_log=`find /var/log/sudo/ -iwholename '*/*/*/log' 2> /dev/null | wc -l`
 
 # Print everything
 cat << EOF
