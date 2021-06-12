@@ -8,15 +8,6 @@
 export LC_ALL=C
 export FS='.+:\\s*'
 
-
-# Check if lvscan exists on the system and scan for
-# anything that does not match '[:space:]*ACTIVE'
-if !(type lvscan &> /dev/null) || lvscan | egrep -vq '^\s*ACTIVE'; then
-	lvm="no"
-else
-	lvm="yes"
-fi
-
 # Store the result of lscpu to avoid executing it twice
 cpu=`lscpu`
 # Get the CPU cores from the previous output
@@ -30,17 +21,25 @@ cpu_threads=`grep '^Thread(s) per core' <<< "$cpu" | \
 cpu_usage=`top -bn1 | grep '^%Cpu' | cut -c 10- | xargs | \
 	awk '{ printf("%.1f%%", $1 + $3) }'`
 
+# Get the total and used memory as bytes
 mem=`free -b | grep 'Mem' | awk '{ print $3 " " $2 }'`
+# Get memory usage as a percentage
 mem_perc=`awk '{ printf("%.1f%%", $1 / $2 * 100) }' <<< "$mem"`
+# Convert bytes to human format
 mem_human=`numfmt --from='iec' --to='iec' --field='1-2' <<< "$mem" | \
 	awk '{ print $1 "/" $2 }'`
 
+# Get the total and used space as bytes, on devices that
+# are located in /dev/ and are mounted elsewhere than on /boot
 disk=`df -B1 | grep '^/dev/' | grep -v '/boot$' | \
-	awk '{ us += $3 } { av += $4 } END { print us " " av }'`
+	awk '{ us += $3 } { av += $2 } END { print us " " av }'`
+# Get disk usage as a percentage
 disk_perc=`awk '{ printf("%.1f%%", $1 / $2 * 100) }' <<< $disk`
+# Convert bytes to human format
 disk_human=`numfmt --from='iec' --to='iec' --field='1-2' <<< "$disk" | \
 	awk '{ print $1 "/" $2 }'`
 
+# Print everything
 cat << EOF
 #Architecture: `uname -a`
 #CPU cores: $cpu_cores
@@ -49,7 +48,8 @@ cat << EOF
 #Disk usage: $disk_human ($disk_perc)
 #CPU load: $cpu_usage
 #Last boot: `who -b | cut -c 21- | xargs`
-#LVM use: $lvm
+#LVM use: `(!(type lvscan &> /dev/null) || (lvscan | egrep -vq '^\s*ACTIVE')) && \
+	echo 'no' || echo 'yes'`
 #TCP connections: `ss -nt state established | head -n +2 | wc -l`
 #Logged users: `who | wc -l`
 #Network: `hostname -I | cut -d ' ' -f 1` (`ip address | grep 'ether' | head -n 1 | awk '{ print $2 }'`)
