@@ -12,11 +12,10 @@ export FS='.+:\\s*'
 # Check if lvscan exists on the system and scan for
 # anything that does not match '[:space:]*ACTIVE'
 if !(type lvscan &> /dev/null) || lvscan | egrep -vq '^\s*ACTIVE'; then
-	lvm="\e[31mno"
+	lvm="no"
 else
-	lvm="\e[32myes"
+	lvm="yes"
 fi
-lvm="$lvm\e[0m"
 
 # Store the result of lscpu to avoid executing it twice
 cpu=`lscpu`
@@ -50,8 +49,8 @@ cat << EOF
 #Disk usage: $disk_human ($disk_perc)
 #CPU load: $cpu_usage
 #Last boot: `who -b | cut -c 21- | xargs`
-#LVM use: `echo -e $lvm`
-#TCP connections: `netstat | egrep '^tcp6?\s+.+\s+ESTABLISHED$' | wc -l`
+#LVM use: $lvm
+#TCP connections: `ss -nt state established | head -n +2 | wc -l`
 #Logged users: `who | wc -l`
 #Network: `hostname -I | cut -d ' ' -f 1` (`ip address | grep 'ether' | head -n 1 | awk '{ print $2 }'`)
 #sudo: 
