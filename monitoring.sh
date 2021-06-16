@@ -18,7 +18,7 @@ cpu_threads=`grep '^Thread(s) per core' <<< "$cpu" | \
 	awk -F "$FS" -v "cores=$cpu_cores" '{ print cores * $2 }'`
 # Get the total CPU usage, by adding the user load
 # to the system load
-cpu_usage=`top -bn1 | grep '^%Cpu' | cut -c 10- | xargs | \
+cpu_usage=`top -bn1 | grep '^%Cpu' | cut -c 9- | xargs | \
 	awk '{ printf("%.1f%%", $1 + $3) }'`
 
 # Get the total and used memory as bytes
