@@ -49,7 +49,7 @@ cat << EOF
 #Memory usage: $mem_human ($mem_perc)
 #Disk usage: $disk_human ($disk_perc)
 #CPU load: $cpu_usage
-#Last boot: `who -b | cut -c 21- | xargs`
+#Last boot: `uptime -s`
 #LVM use: `(!(type lvscan &> /dev/null) || (lvscan | egrep -vq '^\s*ACTIVE')) && \
 	echo 'no' || echo 'yes'`
 #TCP connections: `ss -nt state established | head -n +2 | wc -l`
