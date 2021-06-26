@@ -22,21 +22,21 @@ cpu_usage=`top -bn1 | grep '^%Cpu' | cut -c 9- | xargs | \
 	awk '{ printf("%.1f%%", $1 + $3) }'`
 
 # Get the total and used memory as bytes
-mem=`free -b | grep 'Mem' | awk '{ print $3 " " $2 }'`
+mem=`free -k | grep 'Mem' | awk '{ print $3 " " $2 }'`
 # Get memory usage as a percentage
 mem_perc=`awk '{ printf("%.1f%%", $1 / $2 * 100) }' <<< "$mem"`
 # Convert bytes to human format
-mem_human=`numfmt --from='iec' --to='iec' --field='1-2' <<< "$mem" | \
+mem_human=`numfmt --from='iec' --from-unit='1024' --to='iec' --field='1-2' <<< "$mem" | \
 	awk '{ print $1 "/" $2 }'`
 
 # Get the total and used space as bytes, on devices that
 # are located in /dev/ and are mounted elsewhere than on /boot
-disk=`df -B1 | grep '^/dev/' | grep -v '/boot$' | \
+disk=`df -B1024 | grep '^/dev/' | grep -v '/boot$' | \
 	awk '{ us += $3 } { av += $2 } END { print us " " av }'`
 # Get disk usage as a percentage
 disk_perc=`awk '{ printf("%.1f%%", $1 / $2 * 100) }' <<< $disk`
 # Convert bytes to human format
-disk_human=`numfmt --from='iec' --to='iec' --field='1-2' <<< "$disk" | \
+disk_human=`numfmt --from='iec' --from-unit='1024' --to='iec' --field='1-2' <<< "$disk" | \
 	awk '{ print $1 "/" $2 }'`
 
 sudo_log=`find /var/log/sudo/ -iwholename '*/*/*/log' 2> /dev/null | wc -l`
